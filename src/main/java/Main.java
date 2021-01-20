@@ -1,31 +1,20 @@
-import com.google.api.client.util.DateTime;
-import com.google.api.services.calendar.model.Event;
-
-import java.io.IOException;
-import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class Main {
 
-
-
     public static void main(String[] args) {
 
 
-        List<EYPEvent> mpEventsList = getEventsFromMembersPlatform();
-        for (EYPEvent mpEvent : mpEventsList) {
+        List<EventData> mpEventsList = getEventsFromMembersPlatform();
+        for (EventData mpEvent : mpEventsList) {
             createNewCalendarEvent(mpEvent);
         }
-        System.out.println("Done! Hopefully...");
+        System.out.println("Done!");
 
     }
 
 
-
-
-    public static List<EYPEvent> getEventsFromMembersPlatform(){
+    public static List<EventData> getEventsFromMembersPlatform(){
 
         GetDataFromMembersPlatform getData = new GetDataFromMembersPlatform();
 
@@ -38,7 +27,7 @@ public class Main {
         return getData.getEventsByEventTypeFromOnePage(eventType, baseUrl);
     }
 
-    public static void createNewCalendarEvent(EYPEvent mpEvent){
+    public static void createNewCalendarEvent(EventData mpEvent){
 
         CalendarActions calendarActions = new CalendarActions();
 
@@ -47,6 +36,4 @@ public class Main {
         calendarActions.createEvent(mpEvent, calendarId);
 
     }
-
-
 }

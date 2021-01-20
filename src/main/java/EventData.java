@@ -3,7 +3,7 @@ import com.google.api.services.calendar.model.EventDateTime;
 import lombok.Data;
 
 @Data
-public class EYPEvent {
+public class EventData {
     private String name;
     private EventDateTime start;
     private EventDateTime end;
@@ -11,7 +11,7 @@ public class EYPEvent {
     private String link;
     private EventType eventType;
 
-    public EYPEvent(String name, String start, String end, String location, String link, EventType eventType) {
+    public EventData(String name, String start, String end, String location, String link, EventType eventType) {
         this.name = name;
         this.location = location;
         this.link = link;

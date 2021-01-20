@@ -1,31 +1,27 @@
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.DomElement;
-import com.gargoylesoftware.htmlunit.html.Html;
 import com.gargoylesoftware.htmlunit.html.HtmlElement;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import com.google.api.client.util.DateTime;
-import com.google.api.services.calendar.model.EventDateTime;
 
 import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.util.*;
 
 public class GetDataFromMembersPlatform {
 
-    public List<EYPEvent> getEventsByEventTypeFromOnePage(EventType eventType, String baseUrl) {
+    public List<EventData> getEventsByEventTypeFromOnePage(EventType eventType, String baseUrl) {
         WebClient client = new WebClient();
         client.getOptions().setJavaScriptEnabled(false);
         client.getOptions().setCssEnabled(false);
         client.getOptions().setUseInsecureSSL(true);
 
-        List<EYPEvent> mpEvents = new ArrayList<>();
+        List<EventData> mpEvents = new ArrayList<>();
 
         try {
             HtmlPage page = client.getPage(baseUrl);
             List<HtmlElement> eventHtmlElements = page.getByXPath("//section//div[starts-with(@class, 'views-row')]/*");
             for (HtmlElement eventHtmlElement : eventHtmlElements) {
                 if (eventHtmlElement.hasAttribute("about")) {
-                    EYPEvent currentEvent = getEventInfo(eventHtmlElement, eventType);
+                    EventData currentEvent = getEventInfo(eventHtmlElement, eventType);
                     mpEvents.add(currentEvent);
                 }
             }
@@ -38,7 +34,7 @@ public class GetDataFromMembersPlatform {
 
     }
 
-    private EYPEvent getEventInfo(HtmlElement eventHtmlElement, EventType eventType) {
+    private EventData getEventInfo(HtmlElement eventHtmlElement, EventType eventType) {
         String name = "";
         String start = "";
         String end = "";
@@ -61,7 +57,7 @@ public class GetDataFromMembersPlatform {
 
         }
 
-        EYPEvent currentEvent = new EYPEvent(name, start, end, location, link, eventType);
+        EventData currentEvent = new EventData(name, start, end, location, link, eventType);
 
         return currentEvent;
     }

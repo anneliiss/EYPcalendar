@@ -7,7 +7,6 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
-import com.google.api.client.util.DateTime;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
@@ -18,8 +17,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -60,13 +57,7 @@ public class CalendarActions {
     }
 
 
-    public void createEvent(EYPEvent eypEvent, String calendarId)  {
-
-        String name = eypEvent.getName();
-        EventDateTime start = eypEvent.getStart();
-        EventDateTime end = eypEvent.getEnd();
-        String location = eypEvent.getLocation();
-        String link = eypEvent.getLink();
+    public void createEvent(EventData eventData, String calendarId)  {
 
         try {
             final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
@@ -75,17 +66,16 @@ public class CalendarActions {
                     .build();
 
             Event event = new Event()
-                    .setSummary(name)
-                    .setStart(start)
-                    .setEnd(end)
-                    .setLocation(location)
-                    .setDescription(link);
+                    .setSummary(eventData.getName())
+                    .setStart(eventData.getStart())
+                    .setEnd(eventData.getEnd())
+                    .setLocation(eventData.getLocation())
+                    .setDescription(eventData.getLink());
 
             event = service.events().insert(calendarId, event).execute();
 
             if (!calendarId.equals("All")) {
-                EventType eventType = EventType.ALL;
-                Event eventInGeneralCalendar = service.events().insert(eventType.getCalendarId(), event).execute();
+                Event eventInGeneralCalendar = service.events().insert(EventType.ALL.getCalendarId(), event).execute();
                 System.out.printf("Event created in 'All' calendar: %s\n", eventInGeneralCalendar.getHtmlLink());
             }
 
