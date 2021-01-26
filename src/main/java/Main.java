@@ -4,11 +4,11 @@ public class Main {
 
     public static void main(String[] args) {
 
-
         List<EventData> mpEventsList = getEventsFromMembersPlatform();
         for (EventData mpEvent : mpEventsList) {
             createNewCalendarEvent(mpEvent);
         }
+
         System.out.println("Done!");
 
     }
@@ -18,7 +18,7 @@ public class Main {
 
         GetDataFromMembersPlatform getData = new GetDataFromMembersPlatform();
 
-        EventType eventType = EventType.REGIONALSESSION;
+        EventType eventType = EventType.NATIONALSESSION;
 
         UrlParams urlParams = new UrlParams();
         urlParams.setEventType(eventType.getMembersPlatformId());
@@ -27,13 +27,21 @@ public class Main {
         return getData.getEventsByEventTypeFromOnePage(eventType, baseUrl);
     }
 
+
     public static void createNewCalendarEvent(EventData mpEvent){
 
+        EventDao eventDao = new EventDao();
+        if (eventDao.getEventByName(mpEvent.getName()) != null) {
+            System.out.println("Event exists!");
+            return;
+        }
         CalendarActions calendarActions = new CalendarActions();
 
         String calendarId = mpEvent.getEventType().getCalendarId();
 
-        calendarActions.createEvent(mpEvent, calendarId);
+        EventData event = calendarActions.createEvent(mpEvent, calendarId);
+
+        eventDao.insert(event);
 
     }
 }

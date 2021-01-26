@@ -38,3 +38,5 @@ build
 tokens/
 
 credentials.json
+
+*.db

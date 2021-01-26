@@ -16,6 +16,10 @@ dependencies {
     compile 'com.google.apis:google-api-services-calendar:v3-rev305-1.23.0'
     compile 'net.sourceforge.htmlunit:htmlunit:2.42.0'
 
+    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.34.0'
+
+
+
     compileOnly 'org.projectlombok:lombok:1.18.16'
     annotationProcessor 'org.projectlombok:lombok:1.18.16'
 

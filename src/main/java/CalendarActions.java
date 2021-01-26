@@ -7,6 +7,7 @@ import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
+import com.google.api.client.util.DateTime;
 import com.google.api.client.util.store.FileDataStoreFactory;
 import com.google.api.services.calendar.Calendar;
 import com.google.api.services.calendar.CalendarScopes;
@@ -34,6 +35,7 @@ public class CalendarActions {
 
     /**
      * Creates an authorized Credential object.
+     *
      * @param HTTP_TRANSPORT The network HTTP Transport.
      * @return An authorized Credential object.
      * @throws IOException If the credentials.json file cannot be found.
@@ -57,7 +59,7 @@ public class CalendarActions {
     }
 
 
-    public void createEvent(EventData eventData, String calendarId)  {
+    public EventData createEvent(EventData eventData, String calendarId) {
 
         try {
             final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
@@ -65,26 +67,37 @@ public class CalendarActions {
                     .setApplicationName(APPLICATION_NAME)
                     .build();
 
+            DateTime startDateTime = new DateTime(eventData.getStart());
+            EventDateTime start = new EventDateTime()
+                    .setDateTime(startDateTime)
+                    .setTimeZone("GMT");
+
+
+            DateTime endDateTime = new DateTime(eventData.getEnd());
+            EventDateTime end = new EventDateTime()
+                    .setDateTime(endDateTime)
+                    .setTimeZone("GMT");
+
             Event event = new Event()
                     .setSummary(eventData.getName())
-                    .setStart(eventData.getStart())
-                    .setEnd(eventData.getEnd())
+                    .setStart(start)
+                    .setEnd(end)
                     .setLocation(eventData.getLocation())
                     .setDescription(eventData.getLink());
 
             event = service.events().insert(calendarId, event).execute();
-
-            if (!calendarId.equals("All")) {
-                Event eventInGeneralCalendar = service.events().insert(EventType.ALL.getCalendarId(), event).execute();
-                System.out.printf("Event created in 'All' calendar: %s\n", eventInGeneralCalendar.getHtmlLink());
-            }
-
             System.out.printf("Event created: %s\n", event.getHtmlLink());
-        } catch (GeneralSecurityException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+            eventData.setSpecificCalendarEventId(event.getId());
+
+            Event eventInGeneralCalendar = service.events().insert(EventType.ALL.getCalendarId(), event).execute();
+            System.out.printf("Event created in 'All' calendar: %s\n", eventInGeneralCalendar.getHtmlLink());
+            eventData.setGeneralCalendarEventId(eventInGeneralCalendar.getId());
+
+
+        } catch (GeneralSecurityException | IOException e) {
             e.printStackTrace();
         }
+        return eventData;
     }
 
 }

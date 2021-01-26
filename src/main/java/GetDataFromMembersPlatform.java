@@ -43,9 +43,7 @@ public class GetDataFromMembersPlatform {
         if (eventHtmlElement.hasAttribute("about")) {
             link = getEventLink(eventHtmlElement);
         }
-        Iterator<DomElement> childElements = eventHtmlElement.getChildElements().iterator();
-        while (childElements.hasNext()) {
-            DomElement currentElement = childElements.next();
+        for (DomElement currentElement : eventHtmlElement.getChildElements()) {
             if (currentElement.hasAttribute("content")) {
                 name = getEventName(currentElement);
             } else if (currentElement.asXml().contains("dc:date")) {
@@ -56,14 +54,20 @@ public class GetDataFromMembersPlatform {
             }
 
         }
+        EventData eventData = EventData.builder()
+                .name(name)
+                .start(start)
+                .end(end)
+                .location(location)
+                .link(link)
+                .eventType(eventType)
+                .build();
 
-        EventData currentEvent = new EventData(name, start, end, location, link, eventType);
-
-        return currentEvent;
+        return eventData;
     }
 
     private String getEventLink(HtmlElement currentElement) {
-        String link = "https://members.eyp.org/" + currentElement.getAttribute("about");
+        String link = "https://members.eyp.org" + currentElement.getAttribute("about");
         System.out.println("link: " + link);
         return link;
     }
@@ -76,9 +80,7 @@ public class GetDataFromMembersPlatform {
 
     private List<String> getEventDates(DomElement currentElement) {
         List<String> dates = new ArrayList<>();
-        ListIterator<HtmlElement> timeElements = currentElement.getElementsByTagName("span").listIterator();
-        while (timeElements.hasNext()) {
-            HtmlElement currentChild = timeElements.next();
+        for (HtmlElement currentChild : currentElement.getElementsByTagName("span")) {
             if (currentChild.hasAttribute("content")) {
                 if (currentChild.asXml().contains("start")) {
                     dates.add(currentChild.getAttribute("content")); //start date
