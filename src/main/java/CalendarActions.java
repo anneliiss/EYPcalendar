@@ -69,14 +69,12 @@ public class CalendarActions {
 
             DateTime startDateTime = new DateTime(eventData.getStart());
             EventDateTime start = new EventDateTime()
-                    .setDateTime(startDateTime)
-                    .setTimeZone("GMT");
+                    .setDate(startDateTime);
 
 
             DateTime endDateTime = new DateTime(eventData.getEnd());
             EventDateTime end = new EventDateTime()
-                    .setDateTime(endDateTime)
-                    .setTimeZone("GMT");
+                    .setDate(endDateTime);
 
             Event event = new Event()
                     .setSummary(eventData.getName())

@@ -62,8 +62,9 @@ public class GetDataFromMembersPlatform {
                 name = getEventName(currentElement);
             } else if (currentElement.asXml().contains("dc:date")) {
                 List<String> dates = getEventDates(currentElement);
-                start = dates.get(0);
-                end = dates.get(1);
+                start = dates.get(0).substring(0, 10);
+                end = dates.get(1).substring(0, 10);
+                //get just the date without the time and timezone
                 location = getEventLocation(currentElement);
             }
 
