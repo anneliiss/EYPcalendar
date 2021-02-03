@@ -8,7 +8,11 @@ import java.util.*;
 
 public class GetDataFromMembersPlatform {
 
-    public List<EventData> getEventsByEventTypeFromOnePage(EventType eventType, String baseUrl) {
+    public List<EventData> getEventsByEventType(EventType eventType) {
+        UrlParams urlParams = new UrlParams();
+        urlParams.setEventType(eventType.getMembersPlatformId());
+        urlParams.setDate("1");
+
         WebClient client = new WebClient();
         client.getOptions().setJavaScriptEnabled(false);
         client.getOptions().setCssEnabled(false);
@@ -16,22 +20,32 @@ public class GetDataFromMembersPlatform {
 
         List<EventData> mpEvents = new ArrayList<>();
 
+        int pageNr = 0;
+
         try {
-            HtmlPage page = client.getPage(baseUrl);
-            List<HtmlElement> eventHtmlElements = page.getByXPath("//section//div[starts-with(@class, 'views-row')]/*");
-            for (HtmlElement eventHtmlElement : eventHtmlElements) {
-                if (eventHtmlElement.hasAttribute("about")) {
-                    EventData currentEvent = getEventInfo(eventHtmlElement, eventType);
-                    mpEvents.add(currentEvent);
+            while (true) {
+                urlParams.setPageNr(String.valueOf(pageNr));
+                String baseUrl = urlParams.toString();
+                HtmlPage page = client.getPage(baseUrl);
+                List<HtmlElement> eventHtmlElements = page.getByXPath("//section//div[starts-with(@class, 'views-row')]/*");
+                if (eventHtmlElements.size() < 1) {
+                    //no more events
+                   return mpEvents;
                 }
+                for (HtmlElement eventHtmlElement : eventHtmlElements) {
+                    if (eventHtmlElement.hasAttribute("about")) {
+                        EventData currentEvent = getEventInfo(eventHtmlElement, eventType);
+                        mpEvents.add(currentEvent);
+                    }
+                }
+                pageNr++;
             }
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+
         return mpEvents;
-
-
     }
 
     private EventData getEventInfo(HtmlElement eventHtmlElement, EventType eventType) {
@@ -110,6 +124,4 @@ public class GetDataFromMembersPlatform {
         System.out.println("loc: " + location);
         return location;
     }
-
-
 }
