@@ -6,7 +6,7 @@ import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import java.io.IOException;
 import java.util.*;
 
-public class GetDataFromMembersPlatform {
+public class MembersPlatformScraper {
 
     public List<EventData> getEventsByEventType(EventType eventType) {
         UrlParams urlParams = new UrlParams();
@@ -83,13 +83,11 @@ public class GetDataFromMembersPlatform {
 
     private String getEventLink(HtmlElement currentElement) {
         String link = "https://members.eyp.org" + currentElement.getAttribute("about");
-        System.out.println("link: " + link);
         return link;
     }
 
     private String getEventName(DomElement currentElement) {
         String name = currentElement.getAttribute("content");
-        System.out.println("name: " + name);
         return name;
     }
 
@@ -98,20 +96,18 @@ public class GetDataFromMembersPlatform {
         for (HtmlElement currentChild : currentElement.getElementsByTagName("span")) {
             if (currentChild.hasAttribute("content")) {
                 if (currentChild.asXml().contains("start")) {
-                    dates.add(currentChild.getAttribute("content")); //start date
                     String start = currentChild.getAttribute("content");
-                    System.out.println("start: " + start);
+                    dates.add(start); //start date
+
                 } else if (currentChild.asXml().contains("single")) {
-                    dates.add(currentChild.getAttribute("content")); //start date
-                    dates.add(currentChild.getAttribute("content")); //end date is the same as start
                     String start = currentChild.getAttribute("content");
-                    System.out.println("start: " + start);
                     String end = currentChild.getAttribute("content");
-                    System.out.println("end: " + end);
+                    dates.add(start); //start date
+                    dates.add(end); //end date is the same as start
+
                 } else {
-                    dates.add(currentChild.getAttribute("content")); //end date (not the same as start)
                     String end = currentChild.getAttribute("content");
-                    System.out.println("end: " + end);
+                    dates.add(end); //end date (not the same as start)
                 }
             }
         }
@@ -122,7 +118,6 @@ public class GetDataFromMembersPlatform {
     private String getEventLocation(DomElement currentElement) {
         List<HtmlElement> locationElement = currentElement.getElementsByTagName("a");
         String location = locationElement.get(0).getTextContent();
-        System.out.println("loc: " + location);
         return location;
     }
 }

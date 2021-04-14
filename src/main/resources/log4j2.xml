@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="warn">
+    <Properties>
+        <Property name="basePath">/Users/anneliis/Projects/logs/EYPCalendar</Property>
+    </Properties>
+
+    <Appenders>
+        <RollingFile name="RollingFile" fileName="EYPCalendar.log" filePattern="${basePath}/eypcal-%d{yyyy-MM-dd}.log">
+            <PatternLayout>
+                <Pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</Pattern>
+            </PatternLayout>
+            <Policies>
+                <OnStartUpTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+        <Console name="STDOUT" target="SYSTEM_OUT">
+            <PatternLayout>
+                <Pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</Pattern>
+            </PatternLayout>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Logger name="EYPCalendar" level="debug" additivity="true">
+            <appender-ref ref="RollingFile" level="debug" />
+        </Logger>
+        <Root level="debug" additivity="false">
+            <appender-ref ref="STDOUT" />
+        </Root>
+    </Loggers>
+</Configuration>

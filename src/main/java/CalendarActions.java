@@ -84,11 +84,9 @@ public class CalendarActions {
                     .setDescription(eventData.getLink());
 
             event = service.events().insert(calendarId, event).execute();
-            System.out.printf("Event created: %s\n", event.getHtmlLink());
             eventData.setSpecificCalendarEventId(event.getId());
 
             Event eventInGeneralCalendar = service.events().insert(EventType.ALL.getCalendarId(), event).execute();
-            System.out.printf("Event created in 'All' calendar: %s\n", eventInGeneralCalendar.getHtmlLink());
             eventData.setGeneralCalendarEventId(eventInGeneralCalendar.getId());
 
 
